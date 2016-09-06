@@ -25,12 +25,12 @@
   	<filter-name>filter</filter-name>
   	<url-pattern>*.do</url-pattern>
   </filter-mapping>
+  
   <!-- 文件上传 -->
   <servlet>
-  <servlet-name>filter</servlet-name>
-  	<servlet-class>com.web.filter.FleuploadSErvlet</servlet-class>
+  	<servlet-name>fileupload</servlet-name>
+  	<servlet-class>com.web.controller.FleuploadSErvlet</servlet-class>
   </servlet>
-  
   <servlet-mapping>
   	<servlet-name>fileupload</servlet-name>
   	<url-pattern>/fileupload</url-pattern>
