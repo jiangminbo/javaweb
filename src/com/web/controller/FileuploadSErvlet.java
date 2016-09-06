@@ -33,7 +33,7 @@ public class FileuploadSErvlet  extends HttpServlet{
 		Random random=new Random();//随机数
 		int  i=random.nextInt(10000);//
 		long l=new Date().getTime();//
-
+		
 		
 	}
 	
