@@ -9,7 +9,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jms.Session;
 import javax.servlet.ServletException;
@@ -23,13 +25,18 @@ import com.web.entity.Role;
 import com.web.entity.User;
 import com.web.model.UserModel;
 import com.web.model.impl.UserModelMySQLImpl;
+import com.web.util.JasperReportHelper;
 import com.web.vo.MenuVo;
+import com.web.vo.PageVo;
 
 public class MainServlet  extends HttpServlet{
+	private static final String vm = null;
 	//控制层持有模型对象
 	private UserModel userModel = new UserModelMySQLImpl();
 	private Object menuList;
 	private Object tomenuList;
+	private String user;
+	private String uid;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -163,7 +170,16 @@ public class MainServlet  extends HttpServlet{
 		List<User> userList = userModel.loadAllUsers();
 		req.setAttribute("userList", userList);
 		req.getRequestDispatcher("view/showAllUsers.jsp").forward(req, resp);
+		System.out.println();
 	}
+	/**
+	 * 添加菜单
+	 * @param req
+	 * @param resp
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	
 	public void addMenu(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {	
 		List<User> userList = userModel.loadAllUsers();
@@ -180,17 +196,169 @@ public class MainServlet  extends HttpServlet{
 	}
 	
 	/**
+	 * 修改角色
+	 * 展示角色权限--修改角色权限
+	 * @param req
+	 * @param resp
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void howUserPermissions(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		String rid = req.getParameter("u_id");
+		List<Object[]>  list = userModel.showRolePermission(Integer.valueOf(rid));
+		req.setAttribute("executeAlterUser", list);
+		
+		Role role = userModel.loadRoleById(Integer.valueOf(rid));
+		req.setAttribute("role", role);
+		req.getRequestDispatcher("view/showUser.jsp").forward(req, resp);
+	}
+	/**
+	 * 确认修改权限
+	 * @param req
+	 * @param resp
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void executeAlterUser(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		String rid = req.getParameter("u_id");
+		String[] mid = req.getParameterValues("mids");
+		System.out.println(rid);
+		userModel.affirmalterPermission(Integer.valueOf(rid), mid);
+		req.setAttribute("msg", "修改成功!");
+		this.showUserPermissions(req, resp);
+	}
+	
+	/**
+	 * 展示菜单列表
+	 * @param req
+	 * @param resp
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void showMenus(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		List<MenuVo> list = userModel.loadAllMenuVO();
+		req.setAttribute("menusList", list);
+		req.getRequestDispatcher("view/showMenus.jsp").forward(req, resp);
+	}
+
+
+	/**
+	 * 加载角色列表
+	 * @param req
+	 * @param resp
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void showAllRoles(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		List<Role> roleList = userModel.showRoles(0);
+		req.setAttribute("roleList", roleList);
+		req.getRequestDispatcher("view/showRole.jsp").forward(req, resp);
+		System.out.println(roleList+"===============>");
+		
+		System.out.print("showRoles控制层==>");
+	}
+	/**
+	 * 加载角色用户
+	 * @param req
+	 * @param resp
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void showRole(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		String rid = req.getParameter("rid");
+		
+		List<Object[]>  list = userModel.showRoleUser(Integer.valueOf(rid));
+		req.setAttribute("showRoleUser", list);
+		System.out.println(list.size());
+		
+		Role role = userModel.loadRoleById(Integer.valueOf(rid));
+		req.setAttribute("role", role);
+		req.getRequestDispatcher("view/showRoleUser.jsp").forward(req, resp);
+	}
+	
+	/**
+	 * 确认修改角色用户
+	 * @param req
+	 * @param resp
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void affirmUser(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		String rid = req.getParameter("rid");
+		String[] rids = req.getParameterValues("rids");
+		
+		userModel.affirmalterUser(Integer.valueOf(uid), rids);
+		req.setAttribute("msg", "修改成功!");
+		this.showRole(req, resp);
+	}
+	/**
+	 * 跳转到添加菜单列表
+	 * @param req
+	 * @param resp
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void goAddMenu(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		List<Menu> list = userModel.load12Menus();
+		req.setAttribute("menuList", list);
+		req.getRequestDispatcher("view/addMenu.jsp").forward(req, resp);
+	}
+	
+	/**
+	 * 下载
+	 * @param req
+	 * @param resp
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void download(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		String fileName = "王童语-丫头.mp3";
+		String realPath = this.getServletContext().getRealPath("/")+fileName;
+		
+		File file = new File(realPath);
+		
+		Enumeration<String> enume = req.getHeaders("User-Agent");
+		fileName = enume.nextElement().contains("Firefox")?new String(file.getName().getBytes("utf-8"),"iso-8859-1") : URLEncoder.encode(file.getName(), "utf-8");
+		
+		//响应设置
+		resp.setContentType("application/octet-stream");
+		resp.setHeader("Content-Disposition", "attachment;filename="+fileName);
+		resp.setHeader("Content-Location", fileName);
+		resp.setHeader("Content-Length", file.length()+"");
+		
+		InputStream in = new FileInputStream(file);
+		OutputStream out = resp.getOutputStream();
+		//缓冲下载
+		byte[] bs = new byte[1024*10240];
+		int i;
+		while((i = in.read(bs)) != -1){
+			out.write(bs, 0, i);
+		}
+		
+		out.flush();
+		out.close();
+		in.close();
+	}
+	/**
 	 * 展示角色权限--加载角色菜单
 	 * @param req
 	 * @param resp
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	public void showPermission(HttpServletRequest req, HttpServletResponse resp)
+	public void showUserPermissions(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String rid = req.getParameter("rid");
 		List<Object[]>  list = userModel.showRolePermission(Integer.valueOf(rid));
-		req.setAttribute("showRolePermission", list);
+		req.setAttribute("ShowUserPermissions", list);
 		
 		Role role = userModel.loadRoleById(Integer.valueOf(rid));
 		req.setAttribute("role", role);
@@ -210,9 +378,20 @@ public class MainServlet  extends HttpServlet{
 		System.out.println(rid);
 		userModel.affirmalterPermission(Integer.valueOf(rid), mid);
 		req.setAttribute("msg", "修改成功!");
-		this.showPermission(req, resp);
+		this.showUserPermissions(req, resp);
 	}
 	
-	
-
+//	public void showbaobiao(HttpServletRequest req, HttpServletResponse resp)
+//			throws ServletException, IOException {
+//		req.setCharacterEncoding("utf-8");
+//		String pN=req.getParameter("pageNo");
+//		int pageNo=null!=pN&&!"".equals(pN)?Integer.valueOf(pN):1;
+//		String pS=req.getParameter("pageSize");
+//		int pageSize=null!=pN&&!"".equals(pS)?Integer.valueOf(pS):10;
+//	
+//		PageVo<User> page=vm.userDataManage(pageNo,pageSize);
+//		JasperReportHelper<User> helper=new JasperReportHelper();
+//		Map<String,Object> map=new HashMap<String, Object>();
+//		String jaspporFilePath=this.getServletContext().getRealPath("")+"JasperReportHelper.java";
+//	}
 }

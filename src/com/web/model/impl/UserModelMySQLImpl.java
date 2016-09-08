@@ -143,8 +143,8 @@ public class UserModelMySQLImpl implements UserModel{
 	 * 加载角色
 	 * @return
 	 */
-	public List<Role> showRoles(){
-		return userDao.showRoles();
+	public List<Role> showRoles(int  rid){
+		return userDao.showRoles(rid);
 	}
 	
 	/**
@@ -160,8 +160,8 @@ public class UserModelMySQLImpl implements UserModel{
 	 * @param uid
 	 * @param s
 	 */
-	public void affirmalterPermission(int uid,String[] s){
-		userDao.affirmalterPermission(uid, s);
+	public void affirmalterPermission(int rid,String[] s){
+		userDao.affirmalterPermission(rid, s);
 	}
 	
 	/**
@@ -178,8 +178,8 @@ public class UserModelMySQLImpl implements UserModel{
 	 * @param uid
 	 * @param s
 	 */
-	public void affirmalterUser(int rid,String[] s){
-		userDao.affirmalterUser(rid, s);
+	public void affirmalterUser(int uid,String[] s){
+		userDao.affirmalterUser(uid, s);
 	}
 	
 	/**
@@ -191,5 +191,4 @@ public class UserModelMySQLImpl implements UserModel{
 	public boolean checkUserMenu(int uid, String uri){
 		return userDao.checkUserMenu(uid, uri);
 	}
-	
 }

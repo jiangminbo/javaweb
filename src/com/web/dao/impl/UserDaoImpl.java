@@ -16,6 +16,8 @@ import com.web.vo.MenuVo;
 
 public class UserDaoImpl implements UserDao{
 
+	private Object uid;
+
 	/**
 	 * 通过用户名加载一个用户对象（登录）
 	 * @param userName 用户输入的帐号
@@ -267,7 +269,7 @@ public class UserDaoImpl implements UserDao{
 	 * 加载角色
 	 * @return
 	 */
-	public List<Role> showRoles(){
+	public List<Role> showRoles(int uid ){
 		String sql = "select * from role order by rid";
 		List<Object[]>  list = DBUtil.executeDQL(sql, null);
 		List<Role> roleList = new ArrayList<Role>();
@@ -302,7 +304,7 @@ public class UserDaoImpl implements UserDao{
 	 * @return 
 	 */
 	public List<Object[]> showRolePermission(int rid){
-		String sql = "select m.mid,m.name,m.parentid,(select 1 from rolemenu rm where rm.mid=m.mid and rm.rid=?) from menu m";
+		String sql = "select m.mid,m.mname,m.parentid,(select 1 from rolemenu rm where rm.mid=m.mid and rm.rid=?) from menu m";
 		return DBUtil.executeDQL(sql, new Object[]{rid});
 	}
 	
@@ -328,9 +330,9 @@ public class UserDaoImpl implements UserDao{
 	 * @param uid
 	 * @return
 	 */
-	public List<Object[]> showRoleUser(int rid){
+	public List<Object[]> showRoleUser(int uid){
 		String sql = "select u.uid,u.userName,(select 1 from userrole ur where ur.uid=u.uid and ur.rid=?) from tb_user u";
-		return DBUtil.executeDQL(sql, new Object[]{rid});
+		return DBUtil.executeDQL(sql, new Object[]{uid});
 	}
 	
 	
@@ -339,16 +341,16 @@ public class UserDaoImpl implements UserDao{
 	 * @param uid
 	 * @param s
 	 */
-	public void affirmalterUser(int rid,String[] s){
+	public void affirmalterUser(int uid,String[] s){
 		//删除之前已有的菜单列表关联
-		String sql = "delete from userrole where rid=?";
-		DBUtil.executeDML(sql, new Object[]{rid});
+		String sql = "delete from userrole where urid=?";
+		DBUtil.executeDML(sql, new Object[]{uid});
 		//重新添加新的菜单列表关联
-		System.out.println(rid+"<====");
+		System.out.println(uid+"<====");
 		sql = "insert into userrole(rid,uid) values(?,?)";
 		for(String ss:s){
 			System.out.println("====="+ss);
-			DBUtil.executeDML(sql, new Object[]{rid,ss});
+			DBUtil.executeDML(sql, new Object[]{uid,ss});
 		}
 	}
 	

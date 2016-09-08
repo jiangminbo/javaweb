@@ -110,7 +110,7 @@ public interface UserDao {
 	 * 加载角色
 	 * @return
 	 */
-	public List<Role> showRoles();
+	public List<Role> showRoles( int uid);
 	
 	/**
 	 * 通过id加载角色对象
@@ -137,7 +137,8 @@ public interface UserDao {
 	 * @param uid
 	 * @return
 	 */
-	public List<Object[]> showRoleUser(int rid);
+	public List<Object[]> showRoleUser(int uid);
+	
 	
 	
 	/**
@@ -145,7 +146,7 @@ public interface UserDao {
 	 * @param uid
 	 * @param s
 	 */
-	public void affirmalterUser(int rid,String[] s);
+	public void affirmalterUser(int uid,String[] s);
 	
 	/**
 	 * 检查当前这个用户是否拥有uri这个菜单权限

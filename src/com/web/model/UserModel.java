@@ -109,7 +109,7 @@ public interface UserModel {
 	 * 加载角色
 	 * @return
 	 */
-	public List<Role> showRoles();
+	public List<Role> showRoles(int  rid);
 	
 	/**
 	 * 通过id加载角色对象
@@ -144,7 +144,7 @@ public interface UserModel {
 	 * @param uid
 	 * @param s
 	 */
-	public void affirmalterUser(int rid,String[] s);
+	public void affirmalterUser(int urid,String[] s);
 	
 	/**
 	 * 检查uid这个用户是否拥有uri这个菜单权限
