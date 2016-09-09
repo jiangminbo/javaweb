@@ -23,11 +23,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body>
-  	  <form action="<%= basePath %>affirm.do?methodName=affirm&rid=${role.rid}" method="post" >
+  	  <form action="<%= basePath %>updateRolePermissions.do?methodName=updateRolePermissions&rid=${role.rid}" method="post" >
   	  	  <p>${msg}</p>
   	  	  <p>角色:<b>${role.name}</b>,编辑角色权限：</p>
   	  	  <table border="0" bgcolor="5DDEFF" cellpadding="0" cellspacing="0" class="table_top">
-  	  	  	  <c:forEach items="${ShowUserPermissions}" var="a">
+  	  	  	  <c:forEach items="${executeAlterUser}" var="a">
   	  	  	  	  <input type="checkbox" name="mids" value="${a[0]}"  <c:if test="${a[3]==1}">checked</c:if> />${a[1]}<br/>
   	  	  	  </c:forEach>
   	  	  </table> 

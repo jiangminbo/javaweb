@@ -119,32 +119,32 @@ public interface UserModel {
 	public Role loadRoleById(int rid);
 
 	/**
-	 * 查询所菜单和当前用户已经拥有的菜单-展示角色权限
+	 * 展示角色权限
 	 * @return 
 	 */
 	public List<Object[]> showRolePermission(int rid);
 	
 	/**
-	 * 确认修改权限
+	 * 确认修改角色权限
 	 * @param uid
 	 * @param s
 	 */
 	public void affirmalterPermission(int rid,String[] s);
 	
 	/**
-	 * 加载角色用户
+	 * 加载用户角色
 	 * @param uid
 	 * @return
 	 */
-	public List<Object[]> showRoleUser(int rid);
+	public List<Object[]> showUserRole(int rid);
 	
 	
 	/**
-	 * 确认修改用户
-	 * @param uid
+	 * 确认修改用户角色
+	 * @param rid
 	 * @param s
 	 */
-	public void affirmalterUser(int urid,String[] s);
+	public void affirmalterUser(int rid,String[] s);
 	
 	/**
 	 * 检查uid这个用户是否拥有uri这个菜单权限
@@ -153,5 +153,16 @@ public interface UserModel {
 	 * @return 返回true表示有权限 返回false表示无权限
 	 */
 	public boolean checkUserMenu(int uid, String uri);
+	
+	/**
+	 * 展示部门
+	 * @param uid
+	 * @param uri
+	 * @return 返回true表示有权限 返回false表示无权限
+	 */
+	public Role showdepartment(int uid);
+	
+	
+	
 	
 }

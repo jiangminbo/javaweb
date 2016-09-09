@@ -16,7 +16,6 @@ import com.web.vo.MenuVo;
 
 public class UserDaoImpl implements UserDao{
 
-	private Object uid;
 
 	/**
 	 * 通过用户名加载一个用户对象（登录）
@@ -217,7 +216,7 @@ public class UserDaoImpl implements UserDao{
 	 * @return
 	 */
 	public List<MenuVo> loadAllMenuVO(){
-		String sql = "select m.mid,m.name,m.url,m.isshow,m.level,(select m2.name from menu m2 where m.parentid=m2.mid) from menu m";
+		String sql = "select m.mid,m.name,m.url,m.isshow,m.level,m.parentid(select m2.name from menu m2 where m.parentid=m2.mid) from menu m";
 		List<Object[]> list = DBUtil.executeDQL(sql, null);
 		List<MenuVo> menuVoList = new ArrayList<MenuVo>();
 		MenuVo m = null;
@@ -269,7 +268,7 @@ public class UserDaoImpl implements UserDao{
 	 * 加载角色
 	 * @return
 	 */
-	public List<Role> showRoles(int uid ){
+	public List<Role> showRoles(int rid ){
 		String sql = "select * from role order by rid";
 		List<Object[]>  list = DBUtil.executeDQL(sql, null);
 		List<Role> roleList = new ArrayList<Role>();
@@ -288,9 +287,9 @@ public class UserDaoImpl implements UserDao{
 	 * @param uid
 	 * @return
 	 */
-	public Role loadRoleById(int rid){
+	public Role loadRoleById(int uid){
 		String sql = "select * from role where rid=? ";
-		List<Object[]>  list = DBUtil.executeDQL(sql, new Object[]{rid});
+		List<Object[]>  list = DBUtil.executeDQL(sql, new Object[]{uid});
 		Role r = null;
 		if(null != list&&list.size()>0){
 			Object[] ob = list.get(0);
@@ -330,27 +329,25 @@ public class UserDaoImpl implements UserDao{
 	 * @param uid
 	 * @return
 	 */
-	public List<Object[]> showRoleUser(int uid){
-		String sql = "select u.uid,u.userName,(select 1 from userrole ur where ur.uid=u.uid and ur.rid=?) from tb_user u";
+	public List<Object[]> showUserRole(int uid){
+		String sql = "select u.u_id,u.u_nname,(select 1 from userrole ur where ur.uid=u.u_id and ur.rid=?) from user u";
 		return DBUtil.executeDQL(sql, new Object[]{uid});
 	}
 	
 	
 	/**
 	 * 确认修改用户
-	 * @param uid
+	 * @param rid
 	 * @param s
 	 */
-	public void affirmalterUser(int uid,String[] s){
+	public void affirmalterUser(int rid,String[] s){
 		//删除之前已有的菜单列表关联
-		String sql = "delete from userrole where urid=?";
-		DBUtil.executeDML(sql, new Object[]{uid});
+		String sql = "delete from userrole where rid=?";
+		DBUtil.executeDML(sql, new Object[]{rid});
 		//重新添加新的菜单列表关联
-		System.out.println(uid+"<====");
 		sql = "insert into userrole(rid,uid) values(?,?)";
 		for(String ss:s){
-			System.out.println("====="+ss);
-			DBUtil.executeDML(sql, new Object[]{uid,ss});
+			DBUtil.executeDML(sql, new Object[]{rid,ss});
 		}
 	}
 	
@@ -368,6 +365,39 @@ public class UserDaoImpl implements UserDao{
 		}
 		return false;
 	}
-	
-	
+	/**
+	 * 展示菜单
+	 * @param 
+	 * @param
+	 */
+	public void showAllMenu(String name,String url,int isshow,int parentid){
+		String sql = "select m.level from menu m where m.mid=?";
+		List<Object[]> list = DBUtil.executeDQL(sql, new Object[]{parentid});
+		Object[] o = list.get(0);
+		int level = (Integer)o[0]+1;
+		sql = "insert into menu(name,url,isshow,level,parentid) values(?,?,?,?,?)";
+		DBUtil.executeDML(sql, new Object[]{name,url,isshow,level,parentid});
+	}
+
+	/**
+	 * 展示部门
+	 * @param uid
+	 * @param uri
+	 * @return 返回true表示有权限 返回false表示无权限
+	 */
+	public boolean showdepartment(int uid, String uri){
+		String sql = "select * from Department_of_business_report;";
+		List<Object[]> list = DBUtil.executeDQL(sql, new Object[]{uid});
+		if(null != list && list.size() > 0){
+			return true;
+		}
+		return false;
+	}
+
+	public Role showdepartment(int rid, String[] s) {
+		String sql = "select * from Department_of_business_report;";
+		Object id = null;
+		List<Object[]> list = DBUtil.executeDQL(sql, new Object[]{id});
+		return null;
+	}
 }

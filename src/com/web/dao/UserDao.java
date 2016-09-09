@@ -117,7 +117,7 @@ public interface UserDao {
 	 * @param uid
 	 * @return
 	 */
-	public Role loadRoleById(int rid);
+	public Role loadRoleById(int uid);
 	
 	/**
 	 * 查询所菜单和当前用户已经拥有的菜单-展示角色权限
@@ -137,16 +137,16 @@ public interface UserDao {
 	 * @param uid
 	 * @return
 	 */
-	public List<Object[]> showRoleUser(int uid);
+	public List<Object[]> showUserRole(int uid);
 	
 	
 	
 	/**
 	 * 确认修改用户
-	 * @param uid
+	 * @param rid
 	 * @param s
 	 */
-	public void affirmalterUser(int uid,String[] s);
+	public void affirmalterUser(int rid,String[] s);
 	
 	/**
 	 * 检查当前这个用户是否拥有uri这个菜单权限
@@ -156,4 +156,10 @@ public interface UserDao {
 	 */
 	public boolean checkUserMenu(int uid, String uri);
 	
+	/**
+	 * 展示部门
+	 * @param uid
+	 * @param s
+	 */
+	public Role showdepartment(int rid,String[] s);
 }
